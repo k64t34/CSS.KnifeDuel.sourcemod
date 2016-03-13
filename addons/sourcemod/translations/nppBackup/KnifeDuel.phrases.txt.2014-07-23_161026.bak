@@ -1,0 +1,86 @@
+"Phrases"
+{
+	"1v1"
+    {
+		"en"            "1 vs 1 situation!"
+		"ru"            "Один на один!"
+    }
+	"compatibility_conditions"
+    {
+		"en"            "To start fight with knives - 1)Take out your knife and 2)Stop"
+		"ru"            "Что бы начать дуэль на ножах 1)Возьми нож и 2)Остановись"
+    }
+	"negotiations_end_in"
+    {
+		"en"            "Negotiations end in"
+		"ru"            "До окончания переговоров осталось "
+    }
+	"terrorist"
+    {
+		"en"            "Terrorist"
+		"ru"            "Террорист"
+    }
+	"Counter-terrorist"
+    {
+		"en"            "Counter-terrorist"
+		"ru"            "КонтрТеррорист"
+    }
+	"agree"
+    {
+		"en"            "Agree"
+		"ru"            "Согласен"
+    }
+
+	"second"
+    {
+		"en"            "s."
+		"ru"            "с."
+    }
+	"opponent_agreed"
+    {
+		"en"            "Your opponent agreed"
+		"ru"            "твой противник согласился"
+    }
+	"opponent_not_agreed"
+    {
+		"en"            "Opponent are not agreed.Keep fighting."
+		"ru"            "Дуэли НЕ БУДЕТ! Продолжай сражаться."
+    }	
+	"keep_fighting"
+	{
+		"en"            "Keep fighting."
+		"ru"            "Продолжай сражаться!"	
+	}
+    "ready_to_duel"
+    {
+        "en"            "Both Players Agreed. Fight to the death!"
+		"ru"            "Готовься к дуэли"
+    }
+    "fight_time_remaining"
+    {
+        "en"            "Fight Time Remaining"
+		"ru"            "Осталось сражаться"
+    }
+	"duel_draw"
+    {
+        "en"            "Duel draw"
+		"ru"            "Ничья"
+    }	
+	"won_the_fight"	
+    {
+        "en"            "has won"
+		"ru"            "победил"
+    }
+    "Health"
+    {
+        "en"            "Health"
+    }
+    "Money"
+    {
+        "en"            "Money"
+    }
+    "Speed"
+    {
+        "en"            "Speed"
+    }
+}

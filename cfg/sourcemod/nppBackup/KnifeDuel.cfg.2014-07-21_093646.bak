@@ -1,0 +1,13 @@
+echo
+echo KnifeDuel.cfg
+echo -------------- 
+
+// Time (in seconds), which is given to negotiation duel between players
+// Время ( в секундах), которое  дается на согласования дуэли между игроками
+// Default: "10"
+KnifeDuel_NegotiationTimer 10
+
+// The number of seconds after which start duel, where each team will have only one player
+// Количество секунд через которое начнется дуель, после договоренности между игроками
+// Default: "5"
+KnifeDuel_BeginTimer 5
