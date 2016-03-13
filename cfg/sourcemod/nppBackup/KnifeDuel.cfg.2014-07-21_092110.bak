@@ -1,7 +1,0 @@
-echo
-echo KnifeDuel.cfg
-echo -------------- 
-// The number of seconds after which start duel, where each team will have only one player
-// Количество секунд через которое начнется дуель, после того как в каждой команде останется только по одному игроку
-// Default: "5"
-KnifeDuel_BeginTimer 5
