@@ -1,0 +1,3 @@
+[submodule "smk64t"]
+	path = smk64t
+	url = https://github.com/k64t34/smk64t
