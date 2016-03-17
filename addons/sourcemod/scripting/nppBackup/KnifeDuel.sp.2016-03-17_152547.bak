@@ -644,8 +644,7 @@ void RemoveAllWeapons(){
 #if defined DEBUG
 DebugPrint("RemoveAllWeapons");
 #endif
-int maxent = GetMaxEntities();
-char weapon[MAX_WEAPON_STRING];
+int maxent = GetMaxEntities(), String:weapon[64];
 for (int i=MaxClients;i<maxent;i++)
 	{
 	if ( IsValidEdict(i) && IsValidEntity(i) && GetEntDataEnt2(i, g_iWeaponParent) == -1 )
@@ -661,7 +660,7 @@ for (int i=MaxClients;i<maxent;i++)
 	}
 }    
 //***********************************************
-void RemoveWeapon(int client, char[] weapon){
+void RemoveWeapon(int client, char[] weapon{
 //***********************************************
 int slot, curr_weapon;
 GetTrieValue(g_WeaponSlots, weapon, slot);

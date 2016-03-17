@@ -75,8 +75,8 @@ int g_iAccount,g_iSpeed;
 char ctname[MAX_NAME_LENGTH];
 char tname[MAX_NAME_LENGTH];
 float vClientOrigin[2][3];
-char ctitems[8][MAX_WEAPON_STRING];
-char titems[8][MAX_WEAPON_STRING];
+char ctitems[8][64];
+char titems[8][64];
 Handle g_WeaponSlots    = INVALID_HANDLE;
 Handle cvar_sv_alltalk					= INVALID_HANDLE;
 public Plugin myinfo = 
@@ -587,11 +587,11 @@ void PlayerWeaponHandler(int client, int teamid){
         for (int i = 0; i <= 128; i += 4)
         {
             int weaponentity = -1;
-            char weaponname[MAX_WEAPON_STRING];
+            char weaponname[MAX_WEAPON_NAME];
             weaponentity = GetEntDataEnt2(client, (g_iMyWeapons + i));
             if ( IsValidEdict(weaponentity) )
             {
-                GetEdictClassname(weaponentity, weaponname, MAX_WEAPON_STRING);
+                GetEdictClassname(weaponentity, weaponname, MAX_WEAPON_NAME);
                 if ( (weaponentity != -1) && !StrEqual(weaponname, "worldspawn", false) )
                 {
                     if ( teamid == CS_TEAM_CT || teamid == CS_TEAM_T)
@@ -644,8 +644,7 @@ void RemoveAllWeapons(){
 #if defined DEBUG
 DebugPrint("RemoveAllWeapons");
 #endif
-int maxent = GetMaxEntities();
-char weapon[MAX_WEAPON_STRING];
+int maxent = GetMaxEntities(), String:weapon[64];
 for (int i=MaxClients;i<maxent;i++)
 	{
 	if ( IsValidEdict(i) && IsValidEntity(i) && GetEntDataEnt2(i, g_iWeaponParent) == -1 )
@@ -661,7 +660,7 @@ for (int i=MaxClients;i<maxent;i++)
 	}
 }    
 //***********************************************
-void RemoveWeapon(int client, char[] weapon){
+void RemoveWeapon(int client, char[] weapon{
 //***********************************************
 int slot, curr_weapon;
 GetTrieValue(g_WeaponSlots, weapon, slot);

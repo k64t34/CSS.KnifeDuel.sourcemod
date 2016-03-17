@@ -1,0 +1,10 @@
+addons\sourcemod\scripting\KnifeDuel.sp(303) : warning 217: loose indentation
+addons\sourcemod\scripting\KnifeDuel.sp(305) : warning 217: loose indentation
+addons\sourcemod\scripting\KnifeDuel.sp(331) : warning 217: loose indentation
+addons\sourcemod\scripting\KnifeDuel.sp(337) : warning 217: loose indentation
+addons\sourcemod\scripting\KnifeDuel.sp(510) : warning 217: loose indentation
+addons\sourcemod\scripting\KnifeDuel.sp(513) : warning 217: loose indentation
+addons\sourcemod\scripting\KnifeDuel.sp(767) : warning 203: symbol is never used: "SetupOffsets"
+addons\sourcemod\scripting\KnifeDuel.sp(155) : warning 204: symbol is assigned a value that is never used: "g_BeginTimer"
+addons\sourcemod\scripting\KnifeDuel.sp(156) : warning 204: symbol is assigned a value that is never used: "g_MinPlayers"
+addons\sourcemod\scripting\KnifeDuel.sp(70) : warning 203: symbol is never used: "g_hMyCookie"

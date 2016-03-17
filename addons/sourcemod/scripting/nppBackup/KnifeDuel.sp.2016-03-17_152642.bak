@@ -661,7 +661,7 @@ for (int i=MaxClients;i<maxent;i++)
 	}
 }    
 //***********************************************
-void RemoveWeapon(int client, char[] weapon){
+void RemoveWeapon(int client, char[] weapon{
 //***********************************************
 int slot, curr_weapon;
 GetTrieValue(g_WeaponSlots, weapon, slot);

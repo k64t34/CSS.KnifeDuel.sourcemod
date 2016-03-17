@@ -7,8 +7,6 @@
 //		3-Оповещение          ( 1- текст, 2-звук)
 //		4-Награды
 //		5-Наказания
-// -> При спауме в овремя дули убирать игрока
-
 //#C:\pro\SourceMod\MySMcompile.exe "$(FULL_CURRENT_PATH)"
 
 //https://wiki.alliedmods.net/Introduction_to_SourcePawn_1.7
@@ -19,7 +17,7 @@
 #define DEBUG_LOG 1
 #define DEBUG_PLAYER "Kom64t"
 
-#define PLUGIN_NAME  "KnifeDuel"		
+#define PLUGIN_NAME  "KnifeDuel"
 #define PLUGIN_VERSION "1.1"
 #define GAME_CSS //https://github.com/VoiDeD/sourcemod-transitional-helpers
 #define USE_WEAPON 
@@ -75,8 +73,8 @@ int g_iAccount,g_iSpeed;
 char ctname[MAX_NAME_LENGTH];
 char tname[MAX_NAME_LENGTH];
 float vClientOrigin[2][3];
-char ctitems[8][MAX_WEAPON_STRING];
-char titems[8][MAX_WEAPON_STRING];
+char ctitems[8][64];
+char titems[8][64];
 Handle g_WeaponSlots    = INVALID_HANDLE;
 Handle cvar_sv_alltalk					= INVALID_HANDLE;
 public Plugin myinfo = 
@@ -112,15 +110,15 @@ cvar_Fighttimer    = CreateConVar("KnifeDuel_fighttimer","10",
 cvar_ForceTimer	= CreateConVar("ForceTimer","30",
 	"Time (in seconds) in duel will force if negotiation failed. 0 - disable force duel◙♪/Секунды по",true,10);
 	
-//HookEvent("player_death",	EventPlayerDeath);
+/*HookEvent("player_death",	EventPlayerDeath);
 HookEvent("bomb_planted",	EventBombPlanted,	EventHookMode_PostNoCopy);
-//HookEvent("round_start",	EventRoundStart,	EventHookMode_PostNoCopy);
-//HookEvent("round_end",		EventRoundEnd,EventHookMode_PostNoCopy);
+HookEvent("round_start",	EventRoundStart,	EventHookMode_PostNoCopy);
+HookEvent("round_end",		EventRoundEnd,EventHookMode_PostNoCopy);
 HookEvent("bomb_beginplant",EventBombBeginPlant);
 HookEvent("bomb_abortplant",EventBombAbortPlant);
 HookEvent("hostage_follows",EventHostageFollows);
 HookEvent("hostage_stops_following",EventHostageStopsFollowing);
-//RegConsoleCmd("k_KnifeDuel", cmd_KnifeDuel, "");
+RegConsoleCmd("k_KnifeDuel", cmd_KnifeDuel, "");*/
 
 /*
 g_hMyCookie = RegClientCookie(Plugin_Name, Plugin_Name, CookieAccess_Protected);
@@ -161,8 +159,14 @@ public void EventBombAbortPlant			(Handle event, const char[] name,bool dontBroa
 public void EventHostageFollows			(Handle event, const char[] name,bool dontBroadcast){bombplanted = true;}
 public void EventHostageStopsFollowing	(Handle event, const char[] name,bool dontBroadcast){bombplanted = false;}
 public void EventBombPlanted			(Handle event, const char[] name,bool dontBroadcast){bombplanted = true;}
+#endinput
+
+
+
+
+
 //***********************************************
-public void OnConfigsExecuted(){
+public OnConfigsExecuted(){
 //***********************************************
 g_fighttimer        = GetConVarInt(cvar_Fighttimer);
 g_NegotiationTimer  = GetConVarInt(cvar_KnifeDuel_NegotiationTimer);
@@ -170,27 +174,27 @@ g_ForceTimer = float(GetConVarInt(cvar_ForceTimer));
 
 PrecacheSound(SOUND_TIMER,true);
 PrecacheSound(SOUND_OPPONENT_AGREE,true);
-char strBuf[MAX_STRING_LENGHT];
-Format(strBuf, PLATFORM_MAX_PATH,"%s%s\0",DOWNLOAD_SOUND_FOLDER,SOUND_GONG);								
+decl String:strBuf[MAX_STRING_LENGHT];
+Format(strBuf, MAX_FILENAME_LENGHT,"%s%s\0",DOWNLOAD_SOUND_FOLDER,SOUND_GONG);								
 AddFileToDownloadsTable(strBuf);							
-Format(strBuf, PLATFORM_MAX_PATH,"%s%s",SOUND_FOLDER,SOUND_GONG);								
+Format(strBuf, MAX_FILENAME_LENGHT,"%s%s",SOUND_FOLDER,SOUND_GONG);								
 PrecacheSound(strBuf,true);
 
-Format(strBuf, PLATFORM_MAX_PATH,"%s%s\0",DOWNLOAD_SOUND_FOLDER,SOUND_FIGHT);								
+Format(strBuf, MAX_FILENAME_LENGHT,"%s%s\0",DOWNLOAD_SOUND_FOLDER,SOUND_FIGHT);								
 AddFileToDownloadsTable(strBuf);							
-Format(strBuf, PLATFORM_MAX_PATH,"%s%s",SOUND_FOLDER,SOUND_FIGHT);								
+Format(strBuf, MAX_FILENAME_LENGHT,"%s%s",SOUND_FOLDER,SOUND_FIGHT);								
 PrecacheSound(strBuf,true);
 
 }
 
 //***********************************************
-//public void cmd_KnifeDuel(int client, args){
+public Action:cmd_KnifeDuel(client, args){
 //***********************************************
-//}
+}
 
 
 //***********************************************
-public void EventRoundEnd(Handle event, const char[]name,bool dontBroadcast){
+public EventRoundEnd(Handle:event, const String:name[],bool:dontBroadcast){
 //***********************************************
 #if defined DEBUG
 DebugPrint("EventRoundEnd");
@@ -201,9 +205,8 @@ isFighting=false;
 fighttimer=-1;
 
 }
-
 //***********************************************
-public void EventRoundStart(Handle event, const char[] name,bool dontBroadcast){
+public EventRoundStart(Handle:event, const String:name[],bool:dontBroadcast){
 //***********************************************
 #if defined DEBUG
 DebugPrint("EventRoundStart");
@@ -213,13 +216,14 @@ bombplanted=false;
 //fighttimer=-1;
 ct_ready=false;
 t_ready=false;
+
 //->остановить таймеры
 //-> Проверить что есть Не менее двух игроков
 //
 // Запомнить координаты места рождения для последующей телепортации
 //-> Оптимизировать расстояние между местами 
-int p=0;
-for (int i = 1; i <= MaxClients; i++)
+new p=0;
+for (new i = 1; i <= MaxClients; i++)
         {      
 		if (IsClientInGame(i) && IsPlayerAlive(i))
 			if (GetClientTeam(i)==CS_TEAM_CT)
@@ -230,9 +234,8 @@ for (int i = 1; i <= MaxClients; i++)
 				}
 		}
 }
-
 //***********************************************
-public void EventPlayerDeath(Handle event,const char[] name,bool dontBroadcast){
+public EventPlayerDeath(Handle:event,const String:name[],bool:dontBroadcast){
 //***********************************************
 #if defined DEBUG
 DebugPrint("EventPlayerDeath");
@@ -252,10 +255,9 @@ if (isFighting)
 		#endif
 		if ( (winner != loser) && (winner != 0) )
 			{
-			char winnername[MAX_NAME_LENGTH];		
+			decl String:winnername[MAX_NAME_LENGTH];		
 			GetClientName(winner, winnername, sizeof(winnername));
-			//CPrintToChatAll("{lightgreen}%s %t",winnername,MSG_Duel_Won);
-			PrintToChatAll("%s %t",winnername,MSG_Duel_Won);
+			CPrintToChatAll("{lightgreen}%s %t",winnername,MSG_Duel_Won);
 			//->Set bonus for winner			
 			}
 		CancelFight();	
@@ -273,8 +275,8 @@ else
 	#endif
 	ct_team_cnt	=0;t_team_cnt=0;
 	ctid =0;tid =0;
-	int tmpteam;	
-	for (int i = 1; i <= MaxClients; i++)
+	new tmpteam;	
+	for (new i = 1; i <= MaxClients; i++)
         {      
 		if (IsClientInGame(i) && IsPlayerAlive(i))
 			{
@@ -289,22 +291,19 @@ else
 	if (/*ct_team_cnt == 1 && t_team_cnt == 1 && */ctid !=0 && tid !=0 && !bombplanted)
 		{		
 		//->Проиграть бетховен та да да да
-		//CPrintToChatAll("{green}%t",MSG_1v1);				
-		PrintToChatAll("%t",MSG_1v1);
+		CPrintToChatAll("{green}%t",MSG_1v1);				
 		//CPrintToChat( tid,"{green}%t",MSG_1v1);				
 		//CPrintToChat(ctid,"{green}%t",MSG_1v1);		
 		//Достань нож - сразимся как мужчины. 
-		//CPrintToChat( tid,"{green}%t",MSG_Compatibility_Conditions);				
-		PrintToChat( tid,"%t",MSG_Compatibility_Conditions);				
-		//CPrintToChat(ctid,"{green}%t",MSG_Compatibility_Conditions);				
-		PrintToChat(ctid,"%t",MSG_Compatibility_Conditions);				
+		CPrintToChat( tid,"{green}%t",MSG_Compatibility_Conditions);				
+		CPrintToChat(ctid,"{green}%t",MSG_Compatibility_Conditions);				
 		//->Добавить голосовую инструкцию	
 		fighttimer=g_NegotiationTimer;	
         GetClientName(ctid, ctname, sizeof(ctname));
-        GetClientName(tid, tname, sizeof(tname));		
+        GetClientName(tid, tname, sizeof(tname));
 		CreateTimer(1.0, TimerNegotiation, _, TIMER_REPEAT);
 		// Если в момент 1vs1 один из игроков с ножем, то счиать что он согласен на ножевую
-		char tmpGetClientWeapon[MAX_WEAPON_STRING];
+		decl String:tmpGetClientWeapon[MAX_WEAPON_STRING];
 		GetClientWeapon(ctid, tmpGetClientWeapon, sizeof(tmpGetClientWeapon));
 		if (strcmp(tmpGetClientWeapon,"weapon_knife")==0)ct_ready=true;	
 		GetClientWeapon(tid, tmpGetClientWeapon, sizeof(tmpGetClientWeapon));
@@ -315,7 +314,7 @@ else
 	}
 }
 //***********************************************
-public Action  TimerNegotiation(Handle timer){
+public Action:TimerNegotiation(Handle:timer){
 //***********************************************
 #if defined DEBUG
 DebugPrint("TimerNegotiation %i",fighttimer);
@@ -327,7 +326,7 @@ if (fighttimer==0)
 	// - > Menu to force player to duel
 	PrintHintText(tid,"%t",MSG_Keep_Fighting);
 	PrintHintText(ctid,"%t",MSG_Keep_Fighting);
-	PrintToChatAll("{green}%t",MSG_Opponent_Not_Agreed);
+	CPrintToChatAll("{green}%t",MSG_Opponent_Not_Agreed);
     if (g_ForceTimer!=0)
 		{
 		PrintHintText(tid,"%s %2.0f %s","У вас есть ",g_ForceTimer," секунд покончить с этим");
@@ -339,8 +338,8 @@ if (fighttimer==0)
 EmitSoundToAll(SOUND_TIMER);	
 PrintHintText(tid,"%t %i %t", MSG_Negotiation_Timer,fighttimer,"second");
 PrintHintText(ctid,"%t %i %t", MSG_Negotiation_Timer,fighttimer,"second");
-char tmpGetClientWeapon[MAX_WEAPON_STRING];
-float tmpspeed[3];
+decl String:tmpGetClientWeapon[MAX_WEAPON_STRING];
+decl float:tmpspeed[3];
 if (!ct_ready)
 	{
 	if (IsFakeClient(ctid)) ct_ready=true;
@@ -361,8 +360,8 @@ if (!ct_ready)
 		}
 	if (ct_ready) 
 		{
-		PrintToChatAll("{blue}%t %s %t","counter-terrorist",ctname,"agree");			
-		PrintToChat(tid,"{green}%t",MSG_Opponent_Agreed);					
+		CPrintToChatAll("{blue}%t %s %t","counter-terrorist",ctname,"agree");			
+		CPrintToChat(tid,"{green}%t",MSG_Opponent_Agreed);					
 		//"c:\tmp\vpk from cs\1\sound\weapons\knife\knife_deploy1.wav" 
 		EmitSoundToClient(tid,SOUND_OPPONENT_AGREE);	
 		//->Голосовое сообщение
@@ -389,8 +388,8 @@ if (!t_ready)
 		}
 	if (t_ready) 
 		{
-		PrintToChatAll("{red}%t %s %t","terrorist",tname,"agree");			
-		PrintToChat(ctid,"{green}%t",MSG_Opponent_Agreed);			
+		CPrintToChatAll("{red}%t %s %t","terrorist",tname,"agree");			
+		CPrintToChat(ctid,"{green}%t",MSG_Opponent_Agreed);			
 		EmitSoundToClient(ctid,SOUND_OPPONENT_AGREE);	
 		//->Голосовое сообщение
 		}	
@@ -399,7 +398,7 @@ if (ct_ready && t_ready)
 	{	
 	PrintHintText(tid,"%t", MSG_Ready_to_Duel);
 	PrintHintText(ctid,"%t", MSG_Ready_to_Duel);
-	PrintToChatAll("{green}%t", MSG_Ready_to_Duel);
+	CPrintToChatAll("{green}%t", MSG_Ready_to_Duel);
 	//CreateTimer(g_BeginTimer,VerifyConditions);
 	CreateTimer(0.1,StartFight);
 	return Plugin_Stop;
@@ -408,7 +407,7 @@ return Plugin_Continue;
 }
 
 //***********************************************
-public void CancelFight(){
+public Action:CancelFight(){
 //***********************************************
 #if defined DEBUG
 DebugPrint("CancelFight");
@@ -423,7 +422,7 @@ if (winner != 0)
         {
             PlayerWeaponHandler(winner, GetClientTeam(winner));
 			//очистить список оружия
-            for (int i = 0; i <= 7; i++)
+            for (new i = 0; i <= 7; i++)
             {
                 ctitems[i] = "";
                 titems[i] = "";
@@ -438,7 +437,7 @@ else
 SetConVarInt(cvar_sv_alltalk,g_alltalkenabled);	
 }
 //***********************************************
-public Action  StartFight(Handle timer){ 
+public Action:StartFight(Handle:timer){ 
 //***********************************************
 #if defined DEBUG
 DebugPrint("StartFight");
@@ -448,9 +447,9 @@ if (ctid == 0 || tid == 0)return;
 
 // check if there are only two players
 ct_team_cnt = 0, t_team_cnt = 0;
-for (int i = 1; i <= MaxClients; i++)
+for (new i = 1; i <= MaxClients; i++)
 {
-	int tmpteam;
+	new tmpteam;
 	if (IsClientInGame(i) && IsPlayerAlive(i))
 	{
 		tmpteam = GetClientTeam(i);
@@ -535,16 +534,16 @@ SetConVarInt(cvar_sv_alltalk, 1);
     }
 	*/
 // Save health
-int ct_health=GetClientHealth(ctid);
+new ct_health=GetClientHealth(ctid);
 SetEntData(ctid, g_iHealth, 400);
-int t_health=GetClientHealth(tid);
+new t_health=GetClientHealth(tid);
 SetEntData(tid, g_iHealth, 400);    
 // Give players knifes
 EquipKnife(ctid);
 EquipKnife(tid);
 // Teleport players https://wiki.alliedmods.net/Vectors_Explained_(Scripting)
-float Angs[3]; // {pitch, yaw, roll}
-float FaceToFaceVector[3];
+float :Angs[3]; // {pitch, yaw, roll}
+float :FaceToFaceVector[3];
 MakeVectorFromPoints(vClientOrigin[1],vClientOrigin[0],FaceToFaceVector);
 GetVectorAngles(FaceToFaceVector,Angs);
 TeleportEntity(tid, vClientOrigin[0], Angs, NULL_VECTOR);
@@ -563,35 +562,35 @@ if(t_ready)SetEntityHealth(tid, 100);else SetEntityHealth(tid, t_health);
 //->Start sound
 //Start FightTimer
 fighttimer=g_fighttimer;
-char strBuf[MAX_STRING_LENGHT];
-Format(strBuf, PLATFORM_MAX_PATH,"%s%s",SOUND_FOLDER,SOUND_GONG);	
+decl String:strBuf[MAX_STRING_LENGHT];
+Format(strBuf, MAX_FILENAME_LENGHT,"%s%s",SOUND_FOLDER,SOUND_GONG);	
 EmitSoundToAll(strBuf);
 CreateTimer(1.0, FightTimer, _, TIMER_REPEAT);
-Format(strBuf, PLATFORM_MAX_PATH,"%s%s",SOUND_FOLDER,SOUND_FIGHT);	
+Format(strBuf, MAX_FILENAME_LENGHT,"%s%s",SOUND_FOLDER,SOUND_FIGHT);	
 EmitSoundToAll(strBuf);
 }
 //***********************************************
-public void EquipKnife(int client)
+public EquipKnife(client)
 //***********************************************
 {
     GivePlayerItem(client, "weapon_knife");
     FakeClientCommand(client, "use weapon_knife");
 }
 //***********************************************
-void PlayerWeaponHandler(int client, int teamid){
+PlayerWeaponHandler(client, teamid){
 //***********************************************
 
     if ( isFighting )
     {
-        int count = 0;
-        for (int i = 0; i <= 128; i += 4)
+        new count = 0;
+        for (new i = 0; i <= 128; i += 4)
         {
-            int weaponentity = -1;
-            char weaponname[MAX_WEAPON_STRING];
+            new weaponentity = -1;
+            char weaponname[MAX_WEAPON_NAME];
             weaponentity = GetEntDataEnt2(client, (g_iMyWeapons + i));
             if ( IsValidEdict(weaponentity) )
             {
-                GetEdictClassname(weaponentity, weaponname, MAX_WEAPON_STRING);
+                GetEdictClassname(weaponentity, weaponname, MAX_WEAPON_NAME);
                 if ( (weaponentity != -1) && !StrEqual(weaponname, "worldspawn", false) )
                 {
                     if ( teamid == CS_TEAM_CT || teamid == CS_TEAM_T)
@@ -615,7 +614,7 @@ void PlayerWeaponHandler(int client, int teamid){
     {
         // we have a winner, so give all its weapons we removed before
         RemoveWeapon(client, "knife");
-        for ( int i = 0; i <= 7 ; i++ )
+        for ( new i = 0; i <= 7 ; i++ )
         {
             if ( IsClientInGame(client) )
             {   
@@ -639,14 +638,13 @@ void PlayerWeaponHandler(int client, int teamid){
 
 }
 //***********************************************
-void RemoveAllWeapons(){
+RemoveAllWeapons(){
 //***********************************************
 #if defined DEBUG
 DebugPrint("RemoveAllWeapons");
 #endif
-int maxent = GetMaxEntities();
-char weapon[MAX_WEAPON_STRING];
-for (int i=MaxClients;i<maxent;i++)
+new maxent = GetMaxEntities(), String:weapon[64];
+for (new i=MaxClients;i<maxent;i++)
 	{
 	if ( IsValidEdict(i) && IsValidEntity(i) && GetEntDataEnt2(i, g_iWeaponParent) == -1 )
 		{
@@ -661,9 +659,9 @@ for (int i=MaxClients;i<maxent;i++)
 	}
 }    
 //***********************************************
-void RemoveWeapon(int client, char[] weapon){
+RemoveWeapon(client, String:weapon[]){
 //***********************************************
-int slot, curr_weapon;
+new slot, curr_weapon;
 GetTrieValue(g_WeaponSlots, weapon, slot);
 curr_weapon = GetPlayerWeaponSlot(client, slot);
 
@@ -675,7 +673,7 @@ RemovePlayerItem(client, curr_weapon);
 }
 
 //***********************************************
-void SetupOffsets(){
+SetupOffsets(){
 //***********************************************
 g_iMyWeapons = FindSendPropOffs("CBaseCombatCharacter", "m_hMyWeapons");
 if (g_iMyWeapons == -1)SetFailState("[%s] %s",Plugin_Name,"Error - Unable to get offset for CBaseCombatCharacter::m_hMyWeapons");
@@ -690,7 +688,7 @@ if (g_iWeaponParent == -1)SetFailState("[%s] %s",Plugin_Name,"Error - Unable to 
 }
 
 //***********************************************
-public Action FightTimer(Handle timer){
+public Action:FightTimer(Handle:timer){
 //***********************************************
 #if defined DEBUG
 DebugPrint("FightTimer");
@@ -758,7 +756,7 @@ return Plugin_Stop;
 //}
 
 //***********************************************
-public Action CS_OnBuyCommand(int client, const char[] weapon){
+public Action:CS_OnBuyCommand(client, const String:weapon[]){
 //***********************************************
 if ( isFighting ) return Plugin_Handled;
 return Plugin_Continue;
@@ -767,7 +765,7 @@ return Plugin_Continue;
 #endinput
 
 //***********************************************
-public Action VerifyConditions(Handle timer){
+public Action:VerifyConditions(Handle:timer){
 //***********************************************
 #if defined DEBUG
 DebugPrint("VerifyConditions");
@@ -793,7 +791,7 @@ if ( IsClientInGame(ctid) && IsPlayerAlive(ctid) && IsClientInGame(tid) &&  IsPl
     }
 }
 //***********************************************
-public Action DelayFight(Handle timer){
+public Action:DelayFight(Handle:timer){
 #if defined DEBUG
 DebugPrint("DelayFight");
 #endif
@@ -813,7 +811,7 @@ public Action:ReturnPlayerTeam(Handle:timer){
 
 
 //***********************************************
-public void OnChangeActiveWeapon(int client,Weapon)
+public OnChangeActiveWeapon(client,Weapon)
 //***********************************************
 {
 #if defined DEBUG
@@ -827,4 +825,3 @@ if(oldWeapon && !newWeapon && !strcmp(oldWeaponName, "weapon_hegrenade"))
 // do what you need to do here
 }*/
 }
-#endinput
