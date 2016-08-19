@@ -1,0 +1,5 @@
+*.err
+datetimecomp.inc
+*.bak
+/nppBackup/*
+smcmphlp.ini

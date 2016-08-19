@@ -1,3 +1,17 @@
+//#C:\pro\SourceMod\MySMcompile.exe "$(FULL_CURRENT_PATH)"
+#define nDEBUG 1
+#define DEBUG_PLAYER "Kom64t"
+#define INFO 1
+#define SMLOG 1
+#define DEBUG_LOG 1
+
+#define PLUGIN_NAME  "KnifeDuel"		
+#define PLUGIN_VERSION "1.2"
+#define USE_WEAPON 
+#define USE_PLAYER 
+#define GAME_CSS 
+#include <k64t>
+//
 // Планы
 // -> Поставить лицом к лицу потом повернуть на 180
 // -> Резинка между игроками что бы не убегали
@@ -8,6 +22,9 @@
 //		4-Награды
 //		5-Наказания
 // -> При спауме в овремя дули убирать игрока
+// -> Звуковое оповещение согласования
+// -> Звуковое оповещение согласования
+// -> Выбор ближайшего респаума - есть неприятный эффект -  тесная местность
 
 //#C:\pro\SourceMod\MySMcompile.exe "$(FULL_CURRENT_PATH)"
 
@@ -15,14 +32,7 @@
 //https://github.com/VoiDeD/sourcemod-transitional-helpers/blob/master/thelpers/thelpers.inc
 //http://www.compuphase.com/pawn/Pawn_Language_Guide.pdf
 //http://sourcemod.gamgo.net/ru/api/file/sdktools
-#define DEBUG 1		
-#define DEBUG_LOG 1
-#define DEBUG_PLAYER "Kom64t"
-
-#define PLUGIN_NAME  "KnifeDuel"		
-#define PLUGIN_VERSION "1.1"
-#define GAME_CSS //https://github.com/VoiDeD/sourcemod-transitional-helpers
-#define USE_WEAPON 
+//https://github.com/VoiDeD/sourcemod-transitional-helpers
 
 #define MSG_1v1 "1v1" 
 #define MSG_Compatibility_Conditions	"compatibility_conditions"
@@ -35,7 +45,6 @@
 #define MSG_Duel_Draw					"duel_draw"
 #define MSG_Duel_Won					"won_the_fight"
 
-#include <K64t>	
 #pragma newdecls required
 
 char SOUND_TIMER[]="ambient/tones/floor1.wav";
@@ -164,6 +173,9 @@ public void EventBombPlanted			(Handle event, const char[] name,bool dontBroadca
 //***********************************************
 public void OnConfigsExecuted(){
 //***********************************************
+#if defined DEBUG
+DebugPrint("OnConfigsExecuted");
+#endif
 g_fighttimer        = GetConVarInt(cvar_Fighttimer);
 g_NegotiationTimer  = GetConVarInt(cvar_KnifeDuel_NegotiationTimer);
 g_ForceTimer = float(GetConVarInt(cvar_ForceTimer));
@@ -180,9 +192,7 @@ Format(strBuf, PLATFORM_MAX_PATH,"%s%s\0",DOWNLOAD_SOUND_FOLDER,SOUND_FIGHT);
 AddFileToDownloadsTable(strBuf);							
 Format(strBuf, PLATFORM_MAX_PATH,"%s%s",SOUND_FOLDER,SOUND_FIGHT);								
 PrecacheSound(strBuf,true);
-
 }
-
 //***********************************************
 //public void cmd_KnifeDuel(int client, args){
 //***********************************************
@@ -199,7 +209,6 @@ DebugPrint("EventRoundEnd");
 //<- Проверил. При ничья событие возникает.
 isFighting=false;
 fighttimer=-1;
-
 }
 
 //***********************************************
@@ -269,7 +278,7 @@ else
 	if(bombplanted)return;
 	#if defined DEBUG
 	#else
-	if (GetClientCount() < MinPlayers)return;
+	if (GetClientCount() < g_MinPlayers)return;
 	#endif
 	ct_team_cnt	=0;t_team_cnt=0;
 	ctid =0;tid =0;
@@ -799,19 +808,12 @@ DebugPrint("DelayFight");
 #endif
 CreateTimer(0.1, StartFight);
 }
-
-
-
-
-
 /*//***********************************************
 public Action:ReturnPlayerTeam(Handle:timer){
 //***********************************************
 //CS_SwitchTeam(ctid, CS_TEAM_CT);
 //CS_SwitchTeam(tid, CS_TEAM_T);
 }*/
-
-
 //***********************************************
 public void OnChangeActiveWeapon(int client,Weapon)
 //***********************************************

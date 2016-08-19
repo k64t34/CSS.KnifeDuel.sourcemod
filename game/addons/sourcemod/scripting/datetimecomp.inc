@@ -1,9 +1,9 @@
 #if defined DEBUG
-	#define PLUGIN_DATETIME "Чт, 17.мар.2016 15:26:47"
+	#define PLUGIN_DATETIME "19.08.16 09:14:28"
 	#if defined PLUGIN_VERSION
 		#undef PLUGIN_VERSION
 	#endif
-	#define PLUGIN_VERSION "Чт, 17.мар.2016 15:26:47"
+	#define PLUGIN_VERSION "19.08.16 09:14:28"
 #endif
 #if !defined PLUGIN_NAME
 	#define PLUGIN_NAME "KnifeDuel"
