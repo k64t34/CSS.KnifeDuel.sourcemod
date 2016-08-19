@@ -1,7 +1,0 @@
-game\addons\sourcemod\scripting\KnifeDuel.sp(776) : warning 203: symbol is never used: "SetupOffsets"
-game\addons\sourcemod\scripting\KnifeDuel.sp(87) : warning 203: symbol is never used: "f_WeaponSlots"
-game\addons\sourcemod\scripting\KnifeDuel.sp(164) : warning 204: symbol is assigned a value that is never used: "g_BeginTimer"
-game\addons\sourcemod\scripting\KnifeDuel.sp(160) : warning 203: symbol is never used: "g_WeaponItemNames"
-game\addons\sourcemod\scripting\KnifeDuel.sp(170) : warning 203: symbol is never used: "g_WeaponItemType"
-game\addons\sourcemod\scripting\KnifeDuel.sp(59) : warning 203: symbol is never used: "g_WeaponNames"
-game\addons\sourcemod\scripting\KnifeDuel.sp(79) : warning 203: symbol is never used: "g_hMyCookie"
